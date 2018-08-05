@@ -1,0 +1,29 @@
+{
+    "name": "WatchChannel",
+    "fields": [
+        {
+            "fieldName": "channelName",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "watcher",
+            "otherEntityName": "versionWatcher",
+            "otherEntityField": "id"
+        }
+    ],
+    "changelogDate": "20180805151649",
+    "entityTableName": "watch_channel",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

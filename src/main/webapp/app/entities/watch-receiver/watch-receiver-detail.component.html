@@ -1,0 +1,37 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="watchReceiver">
+            <h2><span>Watch Receiver</span> {{watchReceiver.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span>Email</span></dt>
+                <dd>
+                    <span>{{watchReceiver.email}}</span>
+                </dd>
+                <dt><span>Channel Name</span></dt>
+                <dd>
+                    <span>{{watchReceiver.channelName}}</span>
+                </dd>
+                <dt><span>Watcher</span></dt>
+                <dd>
+                    <div *ngIf="watchReceiver.watcher">
+                        <a [routerLink]="['/version-watcher', watchReceiver.watcher?.id, 'view']">{{watchReceiver.watcher?.id}}</a>
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/watch-receiver', watchReceiver.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

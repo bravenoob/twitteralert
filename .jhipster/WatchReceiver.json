@@ -1,0 +1,30 @@
+{
+    "name": "WatchReceiver",
+    "fields": [
+        {
+            "fieldName": "email",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "channelName",
+            "fieldType": "String"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "watcher",
+            "otherEntityName": "versionWatcher",
+            "otherEntityField": "id"
+        }
+    ],
+    "changelogDate": "20180805151650",
+    "entityTableName": "watch_receiver",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

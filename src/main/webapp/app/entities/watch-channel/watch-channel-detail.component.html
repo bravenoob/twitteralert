@@ -1,0 +1,33 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="watchChannel">
+            <h2><span>Watch Channel</span> {{watchChannel.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span>Channel Name</span></dt>
+                <dd>
+                    <span>{{watchChannel.channelName}}</span>
+                </dd>
+                <dt><span>Watcher</span></dt>
+                <dd>
+                    <div *ngIf="watchChannel.watcher">
+                        <a [routerLink]="['/version-watcher', watchChannel.watcher?.id, 'view']">{{watchChannel.watcher?.id}}</a>
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/watch-channel', watchChannel.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

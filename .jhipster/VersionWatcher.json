@@ -1,0 +1,48 @@
+{
+    "name": "VersionWatcher",
+    "fields": [
+        {
+            "fieldName": "watcherName",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "active",
+            "fieldType": "Boolean",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "channels",
+            "otherEntityName": "watchChannel",
+            "otherEntityRelationshipName": "watcher"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "receiver",
+            "otherEntityName": "watchReceiver",
+            "otherEntityRelationshipName": "watcher"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "user",
+            "otherEntityName": "user",
+            "otherEntityField": "id"
+        }
+    ],
+    "changelogDate": "20180805151648",
+    "entityTableName": "version_watcher",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

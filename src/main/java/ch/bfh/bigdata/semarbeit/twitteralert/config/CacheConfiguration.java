@@ -38,6 +38,11 @@ public class CacheConfiguration {
             cm.createCache(ch.bfh.bigdata.semarbeit.twitteralert.domain.User.class.getName(), jcacheConfiguration);
             cm.createCache(ch.bfh.bigdata.semarbeit.twitteralert.domain.Authority.class.getName(), jcacheConfiguration);
             cm.createCache(ch.bfh.bigdata.semarbeit.twitteralert.domain.User.class.getName() + ".authorities", jcacheConfiguration);
+            cm.createCache(ch.bfh.bigdata.semarbeit.twitteralert.domain.VersionWatcher.class.getName(), jcacheConfiguration);
+            cm.createCache(ch.bfh.bigdata.semarbeit.twitteralert.domain.VersionWatcher.class.getName() + ".channels", jcacheConfiguration);
+            cm.createCache(ch.bfh.bigdata.semarbeit.twitteralert.domain.VersionWatcher.class.getName() + ".receivers", jcacheConfiguration);
+            cm.createCache(ch.bfh.bigdata.semarbeit.twitteralert.domain.WatchChannel.class.getName(), jcacheConfiguration);
+            cm.createCache(ch.bfh.bigdata.semarbeit.twitteralert.domain.WatchReceiver.class.getName(), jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }
