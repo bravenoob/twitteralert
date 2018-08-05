@@ -34,7 +34,7 @@ spring:
         stream:
             kafka:
                 binder:
-                    brokers: localhost
+                    brokers: 192.168.229.128:9092,192.168.229.128:9093,192.168.229.128:9094
                     zk-nodes: localhost
             bindings:
                 output:
