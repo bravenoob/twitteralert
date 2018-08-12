@@ -109,3 +109,9 @@ jhipster:
 # ===================================================================
 
 # application:
+application:
+    twitter:
+        consumerKey:
+        consumerSecret:
+        token:
+        secret:
