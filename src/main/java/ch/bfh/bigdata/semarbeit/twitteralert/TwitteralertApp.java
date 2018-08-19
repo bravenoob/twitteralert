@@ -3,6 +3,7 @@ package ch.bfh.bigdata.semarbeit.twitteralert;
 import ch.bfh.bigdata.semarbeit.twitteralert.config.ApplicationProperties;
 import ch.bfh.bigdata.semarbeit.twitteralert.config.DefaultProfileUtil;
 
+import ch.bfh.bigdata.semarbeit.twitteralert.service.TwitterService;
 import io.github.jhipster.config.JHipsterConstants;
 
 import org.slf4j.Logger;
@@ -26,9 +27,11 @@ public class TwitteralertApp {
     private static final Logger log = LoggerFactory.getLogger(TwitteralertApp.class);
 
     private final Environment env;
+    private TwitterService twitterService;
 
-    public TwitteralertApp(Environment env) {
+    public TwitteralertApp(Environment env, TwitterService twitterService) {
         this.env = env;
+        this.twitterService = twitterService;
     }
 
     /**
@@ -49,6 +52,7 @@ public class TwitteralertApp {
             log.error("You have misconfigured your application! It should not " +
                 "run with both the 'dev' and 'cloud' profiles at the same time.");
         }
+        twitterService.executeAsynchronously();
     }
 
     /**

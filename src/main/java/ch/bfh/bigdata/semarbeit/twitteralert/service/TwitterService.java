@@ -1,4 +1,4 @@
-package ch.bfh.bigdata.semarbeit.twitteralert.messaging;
+package ch.bfh.bigdata.semarbeit.twitteralert.service;
 
 import ch.bfh.bigdata.semarbeit.twitteralert.config.ApplicationProperties;
 import com.google.common.collect.Lists;
@@ -44,7 +44,6 @@ public class TwitterService {
         ClientBuilder builder = initTwitter();
         hosebirdClient = builder.build();
         hosebirdClient.connect();
-        executeAsynchronously();
     }
 
     private ClientBuilder initTwitter() {
@@ -52,7 +51,7 @@ public class TwitterService {
         Hosts hosebirdHosts = new HttpHosts(Constants.STREAM_HOST);
         StatusesFilterEndpoint hosebirdEndpoint = new StatusesFilterEndpoint();
         List<Long> followings = Lists.newArrayList(1234L, 566788L);
-        List<String> terms = Lists.newArrayList("twitter", "api");
+        List<String> terms = Lists.newArrayList("version");
         hosebirdEndpoint.followings(followings);
         hosebirdEndpoint.trackTerms(terms);
         Authentication hosebirdAuth = new OAuth1(twitter.getConsumerKey(), twitter.getConsumerSecret(), twitter.getToken(), twitter.getSecret());
@@ -64,13 +63,12 @@ public class TwitterService {
             .processor(new StringDelimitedProcessor(msgQueue));
     }
 
-
     @Async
-    public void executeAsynchronously() {
+    public void executeAsynchronously()   {
         while (!hosebirdClient.isDone()) {
             try {
                 String tweet = msgQueue.take();
-                log.info("sending message='{}' to topic='{}'", tweet, kafkaTemplate.getDefaultTopic());
+                log.debug("sending message='{}' to topic='{}'", tweet, kafkaTemplate.getDefaultTopic());
                 kafkaTemplate.sendDefault(tweet);
             } catch (InterruptedException e) {
                 log.error("Problem with twitter client", e);

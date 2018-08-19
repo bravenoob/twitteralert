@@ -31,17 +31,12 @@ spring:
     jackson:
         serialization.indent_output: true
     kafka:
+        bootstrap-servers: 192.168.229.128:9092,192.168.229.128:9093,192.168.229.128:9094
         template:
             default-topic: tweets
-    cloud:
-        stream:
-            kafka:
-                binder:
-                    brokers: 192.168.229.128:9092,192.168.229.128:9093,192.168.229.128:9094
-                    zk-nodes: localhost
-            bindings:
-                output:
-                    destination: topic-jhipster
+        producer:
+            key-serializer: org.apache.kafka.common.serialization.StringSerializer
+            value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     datasource:
         type: com.zaxxer.hikari.HikariDataSource
         url: jdbc:h2:file:./target/h2db/db/twitteralert;DB_CLOSE_DELAY=-1
