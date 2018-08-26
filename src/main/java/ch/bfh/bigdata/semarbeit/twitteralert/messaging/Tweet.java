@@ -5,6 +5,7 @@ public class Tweet {
     private String id;
     private String text;
     private String language;
+    private User user;
 
     public String getId() {
         return id;
@@ -30,6 +31,13 @@ public class Tweet {
         this.language = language;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     @Override
     public String toString() {

@@ -1,7 +1,6 @@
 package ch.bfh.bigdata.semarbeit.twitteralert.service;
 
 import ch.bfh.bigdata.semarbeit.twitteralert.config.ApplicationProperties;
-import com.google.common.collect.Lists;
 import com.twitter.hbc.ClientBuilder;
 import com.twitter.hbc.core.Client;
 import com.twitter.hbc.core.Constants;
@@ -16,11 +15,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
+import twitter4j.conf.ConfigurationBuilder;
 
 import javax.annotation.PreDestroy;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -37,23 +41,23 @@ public class TwitterService {
     public TwitterService(ApplicationProperties applicationProperties, KafkaTemplate kafkaTemplate) {
         this.twitter = applicationProperties.getTwitter();
         this.kafkaTemplate = kafkaTemplate;
-        init();
+        msgQueue = new LinkedBlockingQueue<>(10000);
     }
 
-    private void init() {
-        ClientBuilder builder = initTwitter();
+    private void init(List<Long> followings) {
+        ClientBuilder builder = initTwitter(followings);
+        if (hosebirdClient != null) {
+            hosebirdClient.stop();
+        }
         hosebirdClient = builder.build();
         hosebirdClient.connect();
     }
 
-    private ClientBuilder initTwitter() {
-        msgQueue = new LinkedBlockingQueue<>(100000);
+    private ClientBuilder initTwitter(List<Long> followings) {
         Hosts hosebirdHosts = new HttpHosts(Constants.STREAM_HOST);
         StatusesFilterEndpoint hosebirdEndpoint = new StatusesFilterEndpoint();
-        List<Long> followings = Lists.newArrayList(1234L, 566788L);
-        List<String> terms = Lists.newArrayList("version");
         hosebirdEndpoint.followings(followings);
-        hosebirdEndpoint.trackTerms(terms);
+        //hosebirdEndpoint.trackTerms(terms);
         Authentication hosebirdAuth = new OAuth1(twitter.getConsumerKey(), twitter.getConsumerSecret(), twitter.getToken(), twitter.getSecret());
         return new ClientBuilder()
             .name("Hosebird-Client-01")
@@ -63,8 +67,28 @@ public class TwitterService {
             .processor(new StringDelimitedProcessor(msgQueue));
     }
 
+    public void setTwitterFollwings(List<String> profiles) {
+        ConfigurationBuilder cb = new ConfigurationBuilder();
+        cb.setDebugEnabled(true)
+            .setOAuthConsumerKey(twitter.getConsumerKey())
+            .setOAuthConsumerSecret(twitter.getConsumerSecret())
+            .setOAuthAccessToken(twitter.getToken())
+            .setOAuthAccessTokenSecret(twitter.getSecret());
+        TwitterFactory tf = new TwitterFactory(cb.build());
+        Twitter twitter = tf.getInstance();
+        List<Long> userIds = profiles.stream().map(user -> {
+            try {
+                return twitter.showUser(user).getId();
+            } catch (TwitterException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }).collect(Collectors.toList());
+        init(userIds);
+    }
+
     @Async
-    public void executeAsynchronously()   {
+    public void executeAsynchronously() {
         while (!hosebirdClient.isDone()) {
             try {
                 String tweet = msgQueue.take();

@@ -2,10 +2,9 @@ package ch.bfh.bigdata.semarbeit.twitteralert;
 
 import ch.bfh.bigdata.semarbeit.twitteralert.config.ApplicationProperties;
 import ch.bfh.bigdata.semarbeit.twitteralert.config.DefaultProfileUtil;
-
 import ch.bfh.bigdata.semarbeit.twitteralert.service.TwitterService;
+import ch.bfh.bigdata.semarbeit.twitteralert.service.WatchChannelService;
 import io.github.jhipster.config.JHipsterConstants;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -19,6 +18,7 @@ import javax.annotation.PostConstruct;
 import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @SpringBootApplication(exclude = DataSourcePoolMetricsAutoConfiguration.class)
 @EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})
@@ -27,11 +27,13 @@ public class TwitteralertApp {
     private static final Logger log = LoggerFactory.getLogger(TwitteralertApp.class);
 
     private final Environment env;
-    private TwitterService twitterService;
+    private final TwitterService twitterService;
+    private final WatchChannelService watchChannelService;
 
-    public TwitteralertApp(Environment env, TwitterService twitterService) {
+    public TwitteralertApp(Environment env, TwitterService twitterService, WatchChannelService watchChannelService) {
         this.env = env;
         this.twitterService = twitterService;
+        this.watchChannelService = watchChannelService;
     }
 
     /**
@@ -52,6 +54,7 @@ public class TwitteralertApp {
             log.error("You have misconfigured your application! It should not " +
                 "run with both the 'dev' and 'cloud' profiles at the same time.");
         }
+        twitterService.setTwitterFollwings(watchChannelService.findAll().stream().map(channel -> channel.getChannelName()).collect(Collectors.toList()));
         twitterService.executeAsynchronously();
     }
 

@@ -1,10 +1,10 @@
 package ch.bfh.bigdata.semarbeit.twitteralert.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
 import ch.bfh.bigdata.semarbeit.twitteralert.domain.WatchChannel;
-import ch.bfh.bigdata.semarbeit.twitteralert.repository.WatchChannelRepository;
+import ch.bfh.bigdata.semarbeit.twitteralert.service.WatchChannelService;
 import ch.bfh.bigdata.semarbeit.twitteralert.web.rest.errors.BadRequestAlertException;
 import ch.bfh.bigdata.semarbeit.twitteralert.web.rest.util.HeaderUtil;
+import com.codahale.metrics.annotation.Timed;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -29,10 +28,10 @@ public class WatchChannelResource {
 
     private static final String ENTITY_NAME = "watchChannel";
 
-    private final WatchChannelRepository watchChannelRepository;
+    private final WatchChannelService watchChannelService;
 
-    public WatchChannelResource(WatchChannelRepository watchChannelRepository) {
-        this.watchChannelRepository = watchChannelRepository;
+    public WatchChannelResource(WatchChannelService watchChannelService) {
+        this.watchChannelService = watchChannelService;
     }
 
     /**
@@ -49,7 +48,7 @@ public class WatchChannelResource {
         if (watchChannel.getId() != null) {
             throw new BadRequestAlertException("A new watchChannel cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        WatchChannel result = watchChannelRepository.save(watchChannel);
+        WatchChannel result = watchChannelService.save(watchChannel);
         return ResponseEntity.created(new URI("/api/watch-channels/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -71,7 +70,7 @@ public class WatchChannelResource {
         if (watchChannel.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        WatchChannel result = watchChannelRepository.save(watchChannel);
+        WatchChannel result = watchChannelService.save(watchChannel);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, watchChannel.getId().toString()))
             .body(result);
@@ -86,7 +85,7 @@ public class WatchChannelResource {
     @Timed
     public List<WatchChannel> getAllWatchChannels() {
         log.debug("REST request to get all WatchChannels");
-        return watchChannelRepository.findAll();
+        return watchChannelService.findAll();
     }
 
     /**
@@ -99,7 +98,7 @@ public class WatchChannelResource {
     @Timed
     public ResponseEntity<WatchChannel> getWatchChannel(@PathVariable Long id) {
         log.debug("REST request to get WatchChannel : {}", id);
-        Optional<WatchChannel> watchChannel = watchChannelRepository.findById(id);
+        Optional<WatchChannel> watchChannel = watchChannelService.findById(id);
         return ResponseUtil.wrapOrNotFound(watchChannel);
     }
 
@@ -113,8 +112,7 @@ public class WatchChannelResource {
     @Timed
     public ResponseEntity<Void> deleteWatchChannel(@PathVariable Long id) {
         log.debug("REST request to delete WatchChannel : {}", id);
-
-        watchChannelRepository.deleteById(id);
+        watchChannelService.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 }

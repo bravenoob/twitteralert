@@ -4,6 +4,7 @@ import ch.bfh.bigdata.semarbeit.twitteralert.TwitteralertApp;
 
 import ch.bfh.bigdata.semarbeit.twitteralert.domain.WatchChannel;
 import ch.bfh.bigdata.semarbeit.twitteralert.repository.WatchChannelRepository;
+import ch.bfh.bigdata.semarbeit.twitteralert.service.WatchChannelService;
 import ch.bfh.bigdata.semarbeit.twitteralert.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -45,6 +46,9 @@ public class WatchChannelResourceIntTest {
     @Autowired
     private WatchChannelRepository watchChannelRepository;
 
+    @Autowired
+    private WatchChannelService watchChannelService;
+
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -65,7 +69,7 @@ public class WatchChannelResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final WatchChannelResource watchChannelResource = new WatchChannelResource(watchChannelRepository);
+        final WatchChannelResource watchChannelResource = new WatchChannelResource(watchChannelService);
         this.restWatchChannelMockMvc = MockMvcBuilders.standaloneSetup(watchChannelResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
