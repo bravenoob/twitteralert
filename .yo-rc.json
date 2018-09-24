@@ -29,6 +29,11 @@
       "protractor"
     ],
     "jhiPrefix": "jhi",
-    "enableTranslation": false
+    "enableTranslation": false,
+    "appsFolders": [
+      "twitteralert"
+    ],
+    "directoryPath": "../",
+    "monitoring": "no"
   }
 }

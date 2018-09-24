@@ -2,15 +2,12 @@ version: '2'
 services:
     zookeeper:
         image: wurstmeister/zookeeper:3.4.6
-        ports:
-          - 2181:2181
     kafka:
         image: wurstmeister/kafka:1.0.0
         environment:
-            KAFKA_ADVERTISED_HOST_NAME: localhost
+            KAFKA_ADVERTISED_HOST_NAME: kafka
             KAFKA_ADVERTISED_PORT: 9092
             KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-            KAFKA_CREATE_TOPICS: "tweets:1:1"
-            KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://172.18.0.3:9092'
-        ports:
-            - 9092:9092
+            KAFKA_CREATE_TOPICS: "topic-jhipster:1:1"
+        #ports:
+        #    - 9092:9092  # Uncomment to make Kafka available externally

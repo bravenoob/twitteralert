@@ -20,7 +20,7 @@ import java.util.Set;
 public class Classifier {
 
     private DynamicLMClassifier<NGramBoundaryLM> classifier;
-    private int maxCharNGram = 3;
+    private int maxCharNGram = 10;
     private String trainingDataDelimiter;
 
     public Classifier(String trainingDataDelimiter) {
@@ -28,7 +28,7 @@ public class Classifier {
     }
 
     public Classifier(){
-         this("#");
+         this(" ");
     }
 
     public void train(File trainingData)  {
@@ -58,7 +58,7 @@ public class Classifier {
 
             String line = reader.readLine();
             while (line != null) {
-                String[] data = line.split(trainingDataDelimiter);
+                String[] data = line.split(trainingDataDelimiter, 2);
                 categorySet.add(data[0]);
                 annotatedData.add(data);
                 line = reader.readLine();
@@ -70,8 +70,8 @@ public class Classifier {
     }
 
 
-    public String classify(String text){
-        return  classifier.classify(text.trim()).bestCategory().toLowerCase();
+    public boolean classify(String text){
+        return  classifier.classify(text.trim()).bestCategory().toLowerCase().equals("wahr");
     }
 
 }

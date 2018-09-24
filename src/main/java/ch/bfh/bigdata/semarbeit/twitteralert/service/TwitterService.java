@@ -36,15 +36,28 @@ public class TwitterService {
 
     private Client hosebirdClient;
     private BlockingQueue<String> msgQueue;
+    private final Twitter tfInstance;
 
 
     public TwitterService(ApplicationProperties applicationProperties, KafkaTemplate kafkaTemplate) {
         this.twitter = applicationProperties.getTwitter();
         this.kafkaTemplate = kafkaTemplate;
         msgQueue = new LinkedBlockingQueue<>(10000);
+
+        ConfigurationBuilder cb = new ConfigurationBuilder();
+        cb.setDebugEnabled(true)
+            .setOAuthConsumerKey(twitter.getConsumerKey())
+            .setOAuthConsumerSecret(twitter.getConsumerSecret())
+            .setOAuthAccessToken(twitter.getToken())
+            .setOAuthAccessTokenSecret(twitter.getSecret());
+        TwitterFactory tf = new TwitterFactory(cb.build());
+        tfInstance = tf.getInstance();
     }
 
     private void init(List<Long> followings) {
+        if (followings.isEmpty()) {
+            return;
+        }
         ClientBuilder builder = initTwitter(followings);
         if (hosebirdClient != null) {
             hosebirdClient.stop();
@@ -68,19 +81,11 @@ public class TwitterService {
     }
 
     public void setTwitterFollwings(List<String> profiles) {
-        ConfigurationBuilder cb = new ConfigurationBuilder();
-        cb.setDebugEnabled(true)
-            .setOAuthConsumerKey(twitter.getConsumerKey())
-            .setOAuthConsumerSecret(twitter.getConsumerSecret())
-            .setOAuthAccessToken(twitter.getToken())
-            .setOAuthAccessTokenSecret(twitter.getSecret());
-        TwitterFactory tf = new TwitterFactory(cb.build());
-        Twitter twitter = tf.getInstance();
         List<Long> userIds = profiles.stream().map(user -> {
             try {
-                return twitter.showUser(user).getId();
+                return tfInstance.showUser(user).getId();
             } catch (TwitterException e) {
-                e.printStackTrace();
+                log.error("Problem with twitter client", e);
                 return null;
             }
         }).collect(Collectors.toList());
@@ -88,8 +93,17 @@ public class TwitterService {
     }
 
     @Async
+    public void retweet(String id) {
+        try {
+            tfInstance.retweetStatus(Long.valueOf(id));
+        } catch (TwitterException e) {
+            log.error("Problem with twitter client", e);
+        }
+    }
+
+    @Async
     public void executeAsynchronously() {
-        while (!hosebirdClient.isDone()) {
+        while (hosebirdClient != null && !hosebirdClient.isDone()) {
             try {
                 String tweet = msgQueue.take();
                 log.debug("sending message='{}' to topic='{}'", tweet, kafkaTemplate.getDefaultTopic());
@@ -102,6 +116,8 @@ public class TwitterService {
 
     @PreDestroy
     public void destroy() {
-        hosebirdClient.stop();
+        if (hosebirdClient != null) {
+            hosebirdClient.stop();
+        }
     }
 }

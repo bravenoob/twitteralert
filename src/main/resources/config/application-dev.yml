@@ -31,7 +31,7 @@ spring:
     jackson:
         serialization.indent_output: true
     kafka:
-        bootstrap-servers: 192.168.229.128:9092,192.168.229.128:9093,192.168.229.128:9094
+        bootstrap-servers: localhost:9092
         template:
             default-topic: tweets
         producer:
@@ -143,7 +143,7 @@ jhipster:
 # application:
 application:
     twitter:
-        consumerKey: q7VzKV52LzqDLWJZQq1izOGPp
-        consumerSecret: JEzUD049M4LOIZwESQfGPBL19qKps7ESsWNiez2X1fvHVrak1q
-        token: 1153684423-zM8BK1vHECMdgEA4DdMwD4kz1VMDnAisIf7L27R
-        secret: LbaIjB7rgxrOSghitSYEIVS7ey5T5XLEDs1j3xQd9UBE8
+        consumerKey:
+        consumerSecret:
+        token:
+        secret:
